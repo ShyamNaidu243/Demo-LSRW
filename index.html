@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LSRW Learning Platform</title>
+    
+    <!-- Bootstrap CSS for a Better UI -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .container {
+            margin-top: 30px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #007bff;
+        }
+        .section {
+            background: #f1f1f1;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        .btn-custom {
+            width: 100%;
+            margin-top: 10px;
+        }
+        textarea {
+            width: 100%;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>LSRW Learning Model</h1>
+
+        <!-- Listening Section -->
+        <div class="section">
+            <h2>🎧 Listening</h2>
+            <button class="btn btn-primary btn-custom" onclick="fetchListening()">Next Listening Exercise</button>
+            <p id="listeningCounter" class="text-muted"></p>
+            <audio id="listeningAudio" controls class="mt-3 w-100"></audio>
+            <p id="listeningQuestion" class="mt-2"></p>
+        </div>
+
+        <!-- Speaking Section -->
+        <div class="section">
+            <h2>🗣 Speaking</h2>
+            <button class="btn btn-success btn-custom" onclick="startSpeechRecognition()">Start Speaking</button>
+            <p id="speechOutput" class="mt-2 text-primary"></p>
+        </div>
+
+        <!-- Reading Section -->
+        <div class="section">
+            <h2>📖 Reading</h2>
+            <button class="btn btn-warning btn-custom" onclick="fetchReading()">Next Reading Exercise</button>
+            <p id="readingCounter" class="text-muted"></p>
+            <p id="readingParagraph" class="mt-2"></p>
+            <p id="readingQuestion" class="mt-2"></p>
+        </div>
+
+        <!-- Writing Section -->
+        <div class="section">
+            <h2>✍ Writing</h2>
+            <textarea id="writingInput" rows="4" class="form-control"></textarea>
+            <button class="btn btn-dark btn-custom" onclick="submitWriting()">Submit</button>
+            <p id="writingFeedback" class="mt-2 text-success"></p>
+            <button class="btn btn-secondary btn-custom" onclick="nextWritingExercise()">Next Writing Exercise</button>
+            <p id="writingCounter" class="text-muted"></p>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        let listeningExercises = [
+            { audio: "audio1.mp3", question: "What is the speaker talking about?" },
+            { audio: "audio2.mp3", question: "What is the main idea of the conversation?" },
+            { audio: "audio3.mp3", question: "Who is the speaker addressing?" }
+        ];
+        let readingExercises = [
+            { paragraph: "The sun rises in the east and sets in the west.", question: "What is the main idea of this passage?" },
+            { paragraph: "Water is essential for life. It is used for drinking, farming, and industry.", question: "Why is water important?" },
+            { paragraph: "The invention of the telephone revolutionized communication.", question: "What impact did the telephone have on communication?" }
+        ];
+        let writingExercises = [
+            "Write a short paragraph about your favorite hobby.",
+            "Describe an event that made you happy.",
+            "Explain why teamwork is important."
+        ];
+
+        let listeningIndex = 0;
+        let readingIndex = 0;
+        let writingIndex = 0;
+
+        function fetchListening() {
+            if (listeningIndex >= listeningExercises.length) listeningIndex = 0;
+            $("#listeningAudio").attr("src", listeningExercises[listeningIndex].audio);
+            $("#listeningQuestion").text(listeningExercises[listeningIndex].question);
+            $("#listeningCounter").text(`Exercise ${listeningIndex + 1} of ${listeningExercises.length}`);
+            listeningIndex++;
+        }
+
+        function startSpeechRecognition() {
+            var recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+            recognition.onresult = function(event) {
+                var speechText = event.results[0][0].transcript;
+                $("#speechOutput").text("You said: " + speechText);
+            };
+            recognition.start();
+        }
+
+        function fetchReading() {
+            if (readingIndex >= readingExercises.length) readingIndex = 0;
+            $("#readingParagraph").text(readingExercises[readingIndex].paragraph);
+            $("#readingQuestion").text(readingExercises[readingIndex].question);
+            $("#readingCounter").text(`Exercise ${readingIndex + 1} of ${readingExercises.length}`);
+            readingIndex++;
+        }
+
+        function submitWriting() {
+            var text = $("#writingInput").val();
+            if (text.trim() === "") {
+                $("#writingFeedback").text("Please enter your response.");
+                return;
+            }
+            $("#writingFeedback").text("Your writing has been submitted.");
+        }
+
+        function nextWritingExercise() {
+            if (writingIndex >= writingExercises.length) writingIndex = 0;
+            $("#writingInput").val(writingExercises[writingIndex]);
+            $("#writingCounter").text(`Exercise ${writingIndex + 1} of ${writingExercises.length}`);
+            writingIndex++;
+        }
+    </script>
+</body>
+</html>
